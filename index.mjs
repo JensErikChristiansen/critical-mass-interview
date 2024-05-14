@@ -34,6 +34,8 @@ async function main() {
   });
 
   window.addEventListener("resize", () => {
+    if (!$activeLink) return;
+
     $nav.style.setProperty("--underline-left", $activeLink.offsetLeft + "px");
     $nav.style.setProperty("--underline-width", $activeLink.offsetWidth + "px");
     // temporarily disable the underline animation while resizing
