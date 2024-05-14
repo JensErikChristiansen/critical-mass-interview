@@ -1,5 +1,4 @@
 :root {
-  font-family: "SF Pro Display", "Times New Roman";
   font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica,
     Arial, sans-serif;
   letter-spacing: 1px;
@@ -55,9 +54,20 @@ a {
   color: inherit;
 }
 
-a:hover {
-}
-
 a.active {
   color: var(--color-active);
+}
+
+#date-time {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10vmax;
+}
+
+#time {
+  margin-top: 3rem;
+  font-size: 10vw;
+  line-height: 0;
 }
