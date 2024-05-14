@@ -62,10 +62,21 @@ a.active {
   justify-content: center;
   align-items: center;
   margin-top: 10vmax;
+  transition: all 100ms;
 }
 
 #time {
   margin-top: 3rem;
   font-size: 10vw;
   line-height: 0;
+}
+
+.leave-to {
+  opacity: 0;
+  transform: translateY(10%);
+}
+
+.enter-from {
+  opacity: 0;
+  transform: translateY(-10%);
 }

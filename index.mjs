@@ -9,8 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function main() {
   const cities = await fetchCities();
   const $nav = document.getElementById("cities-nav");
-  const $time = document.getElementById("time");
-  const $date = document.getElementById("date");
+  let $dateTime = document.getElementById("date-time");
   const $cities = document.getElementById("cities");
   $cities.innerHTML = createLinks(cities);
   // store in-memory so we don't have to keep querying $cities
@@ -63,21 +62,39 @@ async function main() {
     // remove the offset so we get THEIR local time
     const dateTimeString = json.datetime.replace(/\+.*$/, "");
     const dateTime = new Date(dateTimeString);
+    const $newNode = $dateTime.cloneNode(true);
 
-    $city.textContent = label || "Here";
+    $newNode.querySelector("#city").textContent = label || "Here";
 
-    $time.textContent = dateTime.toLocaleTimeString(undefined, {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    $newNode.querySelector("#time").textContent = dateTime.toLocaleTimeString(
+      undefined,
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+      }
+    );
 
-    $date.textContent = new Date(dateTimeString).toLocaleDateString(undefined, {
+    $newNode.querySelector("#date").textContent = new Date(
+      dateTimeString
+    ).toLocaleDateString(undefined, {
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
     });
+
+    $dateTime.classList.add("leave-to");
+    await wait();
+    $newNode.classList.add("enter-from");
+    $dateTime.replaceWith($newNode);
+    await wait();
+    $newNode.classList.remove("enter-from");
+    $dateTime = $newNode;
   }
+}
+
+function wait(ms = 100) {
+  return new Promise((res) => setTimeout(res, ms));
 }
 
 async function fetchCities() {
