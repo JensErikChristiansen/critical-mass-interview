@@ -13,8 +13,9 @@
   --color: #9e9e9e;
   --color-hover: #447eae;
   --color-active: black;
-  --underline-left: 50%;
+  --underline-left: 0;
   --underline-width: 0;
+  --underline-top: 0;
   --underline-transition: all 300ms ease-out;
 }
 
@@ -25,6 +26,7 @@
   transform: scaleY(1.3);
   left: var(--underline-left);
   width: var(--underline-width);
+  top: var(--underline-top);
   background: var(--color-active);
   transition: var(--underline-transition);
 }

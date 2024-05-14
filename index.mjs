@@ -14,6 +14,7 @@ async function main() {
   $cities.innerHTML = createLinks(cities);
   // store in-memory so we don't have to keep querying $cities
   const $links = [...$cities.children].map((city) => city.children[0]);
+  verticallyAlignUnderline($cities);
   let $activeLink = null;
 
   $cities.addEventListener("click", async (e) => {
@@ -30,27 +31,40 @@ async function main() {
     $activeLink = $currentLink;
     $links.forEach((link) => link.classList.remove(ACTIVE_CLASS));
     $activeLink.classList.add(ACTIVE_CLASS);
-    $nav.style.setProperty("--underline-left", $activeLink.offsetLeft + "px");
-    $nav.style.setProperty("--underline-width", $activeLink.offsetWidth + "px");
-
+    moveUnderline($activeLink);
     const city = $activeLink.dataset.city;
     await updateDateTime(city, $activeLink.ariaLabel);
   });
 
+  function moveUnderline(link) {
+    $nav.style.setProperty("--underline-left", link.offsetLeft + "px");
+    $nav.style.setProperty("--underline-width", link.offsetWidth + "px");
+    verticallyAlignUnderline(link.parentElement);
+  }
+
+  function verticallyAlignUnderline(el) {
+    $nav.style.setProperty(
+      "--underline-top",
+      el.offsetTop + el.offsetHeight + "px"
+    );
+  }
+
   window.addEventListener("resize", () => {
     if (!$activeLink) return;
 
-    $nav.style.setProperty("--underline-left", $activeLink.offsetLeft + "px");
-    $nav.style.setProperty("--underline-width", $activeLink.offsetWidth + "px");
-    // temporarily disable the underline animation while resizing
+    moveUnderline($activeLink);
+
+    const underlineTransition = $nav.style.getPropertyValue(
+      "--underline-transition"
+    );
+
     $nav.style.setProperty("--underline-transition", 0);
 
     createDebounce()(() => {
-      $nav.style.setProperty("--underline-transition", "all 300ms ease-out");
+      $nav.style.setProperty("--underline-transition", underlineTransition);
     });
   });
 
-  const $city = document.getElementById("city");
   updateDateTime();
 
   async function updateDateTime(city, label) {
@@ -63,7 +77,6 @@ async function main() {
     const dateTimeString = json.datetime.replace(/\+.*$/, "");
     const dateTime = new Date(dateTimeString);
     const $newNode = $dateTime.cloneNode(true);
-
     $newNode.querySelector("#city").textContent = label || "Here";
 
     $newNode.querySelector("#time").textContent = dateTime.toLocaleTimeString(
@@ -91,10 +104,6 @@ async function main() {
     $newNode.classList.remove("enter-from");
     $dateTime = $newNode;
   }
-}
-
-function wait(ms = 100) {
-  return new Promise((res) => setTimeout(res, ms));
 }
 
 async function fetchCities() {
@@ -125,4 +134,8 @@ function createDebounce() {
 
     timer = setTimeout(fn, delay);
   };
+}
+
+function wait(ms = 100) {
+  return new Promise((res) => setTimeout(res, ms));
 }
