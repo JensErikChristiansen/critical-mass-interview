@@ -18,12 +18,17 @@ async function main() {
   let $activeLink = null;
 
   $cities.addEventListener("click", async (e) => {
+    let $currentLink = e.target;
+
     if (e.target.tagName === "A") {
-      $activeLink = e.target;
+      $currentLink = e.target;
     } else if (e.target.tagName === "LI") {
-      $activeLink = e.target.children[0];
+      $currentLink = e.target.children[0];
     } else return;
 
+    if ($activeLink === $currentLink) return;
+
+    $activeLink = $currentLink;
     $links.forEach((link) => link.classList.remove(ACTIVE_CLASS));
     $activeLink.classList.add(ACTIVE_CLASS);
     $nav.style.setProperty("--underline-left", $activeLink.offsetLeft + "px");
