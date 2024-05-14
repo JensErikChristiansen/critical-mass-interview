@@ -7,16 +7,24 @@ async function main() {
   console.log(cities);
 
   const $cities = document.getElementById("cities");
+  const $nav = document.getElementById("cities-nav");
   $cities.innerHTML = createCities(cities);
   // store in-memory so we don't have to keep querying $cities
   const links = [...$cities.children].map((city) => city.children[0]);
 
-  $cities.addEventListener("click", (e, a, b) => {
+  $cities.addEventListener("click", (e) => {
+    if (e.target.tagName !== "A") return;
+
     const city = e.target.dataset.city; // TODO: fetch time
 
     links.forEach((link) => link.classList.remove(ACTIVE_CLASS));
 
-    e.target.classList.add(ACTIVE_CLASS);
+    const link = e.target;
+    console.log(link);
+    link.classList.add(ACTIVE_CLASS);
+
+    $nav.style.setProperty("--underline-left", link.offsetLeft + "px");
+    $nav.style.setProperty("--underline-width", link.offsetWidth + "px");
   });
 }
 
