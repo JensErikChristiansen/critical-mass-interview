@@ -75,15 +75,18 @@ main {
   grid-column: 1 / 1;
 }
 
-.time {
-  margin-top: 3rem;
+.date-time * {
+  margin: 0;
+}
+
+.date-time__time {
   font-size: 10vw;
-  line-height: 0;
 }
 
 .leave-to {
   opacity: 0;
-  transform: translateY(20%);
+  transform: translateY(10%);
+  transition: all 500ms ease;
 }
 
 .enter-from {

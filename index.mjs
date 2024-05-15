@@ -84,7 +84,7 @@ async function main() {
       timezones[city] || Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     const $newNode = $dateTime.cloneNode(true);
-    $newNode.querySelector(".city").textContent = label || "Home";
+    $newNode.querySelector(".date-time__city").textContent = label || "Home";
 
     // animate the leaving and entering of old/new datetime elements
     $dateTime.classList.add("leave-to");
@@ -110,7 +110,7 @@ async function main() {
     function createClock($dateTimeEl) {
       const dateTime = new Date();
 
-      $dateTimeEl.querySelector(".time").textContent =
+      $dateTimeEl.querySelector(".date-time__time").textContent =
         dateTime.toLocaleTimeString(undefined, {
           hour: "2-digit",
           minute: "2-digit",
@@ -118,7 +118,7 @@ async function main() {
           timeZone,
         });
 
-      $dateTimeEl.querySelector(".date").textContent =
+      $dateTimeEl.querySelector(".date-time__date").textContent =
         dateTime.toLocaleDateString(undefined, {
           weekday: "long",
           year: "numeric",
