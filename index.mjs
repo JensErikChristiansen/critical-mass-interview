@@ -16,7 +16,7 @@ async function main() {
   // store in-memory so we don't have to keep querying $cities
   const $links = [...$cities.children].map((city) => city.children[0]);
   verticallyAlignUnderline($cities);
-  renderDateTime();
+  await renderDateTime();
 
   $cities.addEventListener("click", async (e) => {
     let $currentLink = e.target;
@@ -34,26 +34,27 @@ async function main() {
     $activeLink.classList.add(ACTIVE_CLASS);
     moveUnderline($activeLink);
     const city = $activeLink.dataset.city;
-    await renderDateTime(city, $activeLink.ariaLabel);
+    renderDateTime(city, $activeLink.ariaLabel);
   });
 
-  const resizeDebounce = createDebounce();
+  window.addEventListener(
+    "resize",
+    ((resizeDebounce, underlineTransition) => {
+      return () => {
+        if (!$activeLink) return;
 
-  const underlineTransition = getComputedStyle($nav).getPropertyValue(
-    "--underline-transition"
+        moveUnderline($activeLink);
+        $nav.style.setProperty("--underline-transition", 0);
+
+        resizeDebounce(() => {
+          $nav.style.setProperty("--underline-transition", underlineTransition);
+        });
+      };
+    })(
+      createDebounce(),
+      getComputedStyle($nav).getPropertyValue("--underline-transition")
+    )
   );
-
-  window.addEventListener("resize", () => {
-    if (!$activeLink) return;
-
-    moveUnderline($activeLink);
-    $nav.style.setProperty("--underline-transition", 0);
-
-    resizeDebounce(() => {
-      console.log("underlineTransition:", underlineTransition);
-      $nav.style.setProperty("--underline-transition", underlineTransition);
-    });
-  });
 
   async function fetchCities() {
     const res = await fetch("./navigation.json");
@@ -134,7 +135,6 @@ function createDebounce() {
     }
 
     timer = setTimeout(() => {
-      console.log("running fn()");
       fn();
       timer = null;
     }, delay);
