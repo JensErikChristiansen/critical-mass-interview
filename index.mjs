@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function main() {
   const $nav = document.getElementById("cities-nav");
-  let $dateTime = document.getElementById("date-time");
+  let $dateTime = document.querySelector(".date-time");
   const $cities = document.getElementById("cities");
   let $activeLink = null;
   const cities = await fetchCities();
@@ -20,6 +20,11 @@ async function main() {
   await renderDateTime();
 
   $cities.addEventListener("click", async (e) => {
+    const isCurrentlySwitchingCities =
+      document.querySelectorAll(".date-time").length > 1;
+
+    if (isCurrentlySwitchingCities) return;
+
     let $currentLink = e.target;
 
     if (e.target.tagName === "A") {
@@ -79,26 +84,33 @@ async function main() {
       timezones[city] || Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     const $newNode = $dateTime.cloneNode(true);
-    $newNode.querySelector("#city").textContent = label || "Home";
+    $newNode.querySelector(".city").textContent = label || "Home";
 
     // animate the leaving and entering of old/new datetime elements
     $dateTime.classList.add("leave-to");
-    await wait();
     $newNode.classList.add("enter-from");
-    $dateTime.replaceWith($newNode);
-    await wait();
-    $newNode.classList.remove("enter-from");
-    $dateTime = $newNode;
+    $dateTime.before($newNode);
 
-    if (interval !== null) clearInterval(interval);
+    setTimeout(() => {
+      $dateTime.remove();
+      $dateTime = $newNode;
+    }, 1000);
 
-    createClock();
-    interval = setInterval(createClock, 1000);
+    setTimeout(() => {
+      $newNode.classList.remove("enter-from");
+      createClock($newNode);
 
-    function createClock() {
+      if (interval !== null) clearInterval(interval);
+
+      interval = setInterval(() => {
+        createClock($newNode);
+      }, 1000);
+    }, 300);
+
+    function createClock($dateTimeEl) {
       const dateTime = new Date();
 
-      $dateTime.querySelector("#time").textContent =
+      $dateTimeEl.querySelector(".time").textContent =
         dateTime.toLocaleTimeString(undefined, {
           hour: "2-digit",
           minute: "2-digit",
@@ -106,7 +118,7 @@ async function main() {
           timeZone,
         });
 
-      $dateTime.querySelector("#date").textContent =
+      $dateTimeEl.querySelector(".date").textContent =
         dateTime.toLocaleDateString(undefined, {
           weekday: "long",
           year: "numeric",
@@ -145,8 +157,4 @@ function createDebounce() {
       timer = null;
     }, delay);
   };
-}
-
-function wait(ms = 200) {
-  return new Promise((res) => setTimeout(res, ms));
 }

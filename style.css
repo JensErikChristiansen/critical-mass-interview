@@ -63,16 +63,19 @@ a.active {
   color: var(--color-active);
 }
 
-#date-time {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+main {
+  display: grid;
+  place-items: center;
   margin-top: 10vmax;
-  transition: all 200ms ease;
 }
 
-#time {
+.date-time {
+  transition: all 1000ms ease;
+  grid-row: 1 / 1;
+  grid-column: 1 / 1;
+}
+
+.time {
   margin-top: 3rem;
   font-size: 10vw;
   line-height: 0;
@@ -80,10 +83,10 @@ a.active {
 
 .leave-to {
   opacity: 0;
-  transform: translateY(10%);
+  transform: translateY(20%);
 }
 
 .enter-from {
   opacity: 0;
-  transform: translateY(-10%);
+  transform: translateY(-20%);
 }
