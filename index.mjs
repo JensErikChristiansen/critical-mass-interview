@@ -33,8 +33,7 @@ async function main() {
     $links.forEach((link) => link.classList.remove(ACTIVE_CLASS));
     $activeLink.classList.add(ACTIVE_CLASS);
     moveUnderline($activeLink);
-    const city = $activeLink.dataset.city;
-    renderDateTime(city, $activeLink.ariaLabel);
+    renderDateTime($activeLink.dataset.city, $activeLink.ariaLabel);
   });
 
   window.addEventListener(
@@ -102,6 +101,7 @@ async function main() {
       }
     );
 
+    // animate the leaving and entering of old/new datetime elements
     $dateTime.classList.add("leave-to");
     await wait();
     $newNode.classList.add("enter-from");
