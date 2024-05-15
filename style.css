@@ -69,7 +69,7 @@ a.active {
   justify-content: center;
   align-items: center;
   margin-top: 10vmax;
-  transition: all 100ms;
+  transition: all 200ms ease;
 }
 
 #time {

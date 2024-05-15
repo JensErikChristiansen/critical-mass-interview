@@ -1,6 +1,7 @@
 import timezones from "./timeZones.mjs";
 
 const ACTIVE_CLASS = "active";
+let interval = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   main();
@@ -77,29 +78,8 @@ async function main() {
     const timeZone =
       timezones[city] || Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    const dateTime = new Date();
     const $newNode = $dateTime.cloneNode(true);
-    $newNode.querySelector("#city").textContent = label || "Here";
-
-    $newNode.querySelector("#time").textContent = dateTime.toLocaleTimeString(
-      undefined,
-      {
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZone,
-      }
-    );
-
-    $newNode.querySelector("#date").textContent = dateTime.toLocaleDateString(
-      undefined,
-      {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        timeZone,
-      }
-    );
+    $newNode.querySelector("#city").textContent = label || "Home";
 
     // animate the leaving and entering of old/new datetime elements
     $dateTime.classList.add("leave-to");
@@ -109,6 +89,32 @@ async function main() {
     await wait();
     $newNode.classList.remove("enter-from");
     $dateTime = $newNode;
+
+    if (interval !== null) clearInterval(interval);
+
+    createClock();
+    interval = setInterval(createClock, 1000);
+
+    function createClock() {
+      const dateTime = new Date();
+
+      $dateTime.querySelector("#time").textContent =
+        dateTime.toLocaleTimeString(undefined, {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          timeZone,
+        });
+
+      $dateTime.querySelector("#date").textContent =
+        dateTime.toLocaleDateString(undefined, {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          timeZone,
+        });
+    }
   }
 
   function moveUnderline(link) {
@@ -141,6 +147,6 @@ function createDebounce() {
   };
 }
 
-function wait(ms = 100) {
+function wait(ms = 200) {
   return new Promise((res) => setTimeout(res, ms));
 }
