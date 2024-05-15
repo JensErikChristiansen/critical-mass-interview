@@ -1,7 +1,6 @@
-import timezones from "./timeZones.mjs";
+import DateTime from "./lib/DateTime.mjs";
 
 const ACTIVE_CLASS = "active";
-let interval = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   main();
@@ -14,6 +13,7 @@ async function main() {
   const cities = await fetchCities();
   $cities.innerHTML = createLinks(cities);
   verticallyAlignUnderline($cities);
+  const renderDateTime = DateTime();
   await renderDateTime();
 
   $cities.addEventListener("click", async (e) => {
@@ -73,56 +73,6 @@ async function main() {
     }, "");
 
     return html;
-  }
-
-  async function renderDateTime(city, label) {
-    const timeZone =
-      timezones[city] || Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    const $oldNode = document.querySelectorAll(".date-time")[0];
-    const $newNode = $oldNode.cloneNode(true);
-    $newNode.querySelector(".date-time__city").textContent = label || "Home";
-
-    // animate the leaving and entering of old/new datetime elements
-    $oldNode.classList.add("leave-to");
-    $newNode.classList.add("enter-from");
-    $oldNode.before($newNode);
-
-    setTimeout(() => {
-      $oldNode.remove();
-    }, 1000);
-
-    setTimeout(() => {
-      $newNode.classList.remove("enter-from");
-      createClock($newNode);
-
-      if (interval !== null) clearInterval(interval);
-
-      interval = setInterval(() => {
-        createClock($newNode);
-      }, 1000);
-    }, 300);
-
-    function createClock($dateTimeEl) {
-      const dateTime = new Date();
-
-      $dateTimeEl.querySelector(".date-time__time").textContent =
-        dateTime.toLocaleTimeString(undefined, {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          timeZone,
-        });
-
-      $dateTimeEl.querySelector(".date-time__date").textContent =
-        dateTime.toLocaleDateString(undefined, {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          timeZone,
-        });
-    }
   }
 
   function moveUnderline(link) {
