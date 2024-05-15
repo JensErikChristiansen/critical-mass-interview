@@ -1,4 +1,4 @@
-import timezones, { TIMEZONE_BASE_URL } from "./timezones.mjs";
+import timezones from "./timeZones.mjs";
 
 const ACTIVE_CLASS = "active";
 
@@ -17,10 +17,6 @@ async function main() {
   const $links = [...$cities.children].map((city) => city.children[0]);
   verticallyAlignUnderline($cities);
   renderDateTime();
-
-  const underlineTransition = getComputedStyle($nav).getPropertyValue(
-    "--underline-transition"
-  );
 
   $cities.addEventListener("click", async (e) => {
     let $currentLink = e.target;
@@ -42,6 +38,10 @@ async function main() {
   });
 
   const resizeDebounce = createDebounce();
+
+  const underlineTransition = getComputedStyle($nav).getPropertyValue(
+    "--underline-transition"
+  );
 
   window.addEventListener("resize", () => {
     if (!$activeLink) return;
@@ -74,14 +74,10 @@ async function main() {
   }
 
   async function renderDateTime(city, label) {
-    const timezone =
+    const timeZone =
       timezones[city] || Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    const res = await fetch(TIMEZONE_BASE_URL + timezone);
-    const json = await res.json();
-    // remove the offset so we get THEIR local time
-    const dateTimeString = json.datetime.replace(/\+.*$/, "");
-    const dateTime = new Date(dateTimeString);
+    const dateTime = new Date();
     const $newNode = $dateTime.cloneNode(true);
     $newNode.querySelector("#city").textContent = label || "Here";
 
@@ -90,17 +86,20 @@ async function main() {
       {
         hour: "2-digit",
         minute: "2-digit",
+        timeZone,
       }
     );
 
-    $newNode.querySelector("#date").textContent = new Date(
-      dateTimeString
-    ).toLocaleDateString(undefined, {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    $newNode.querySelector("#date").textContent = dateTime.toLocaleDateString(
+      undefined,
+      {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        timeZone,
+      }
+    );
 
     $dateTime.classList.add("leave-to");
     await wait();

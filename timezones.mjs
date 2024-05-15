@@ -7,5 +7,3 @@ export default {
   "hong-kong": "Asia/Hong_Kong",
   sydney: "Australia/Sydney",
 };
-
-export const TIMEZONE_BASE_URL = "https://worldtimeapi.org/api/timezone/";
