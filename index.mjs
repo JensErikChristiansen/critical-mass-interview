@@ -9,22 +9,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function main() {
   const $nav = document.getElementById("cities-nav");
-  let $dateTime = document.querySelector(".date-time");
   const $cities = document.getElementById("cities");
   let $activeLink = null;
   const cities = await fetchCities();
   $cities.innerHTML = createLinks(cities);
-  // store in-memory so we don't have to keep querying $cities
-  const $links = [...$cities.children].map((city) => city.children[0]);
   verticallyAlignUnderline($cities);
   await renderDateTime();
 
   $cities.addEventListener("click", async (e) => {
-    const isCurrentlySwitchingCities =
-      document.querySelectorAll(".date-time").length > 1;
-
-    if (isCurrentlySwitchingCities) return;
-
     let $currentLink = e.target;
 
     if (e.target.tagName === "A") {
@@ -36,7 +28,11 @@ async function main() {
     if ($activeLink === $currentLink) return;
 
     $activeLink = $currentLink;
-    $links.forEach((link) => link.classList.remove(ACTIVE_CLASS));
+
+    $cities
+      .querySelectorAll("a")
+      .forEach((link) => link.classList.remove(ACTIVE_CLASS));
+
     $activeLink.classList.add(ACTIVE_CLASS);
     moveUnderline($activeLink);
     renderDateTime($activeLink.dataset.city, $activeLink.ariaLabel);
@@ -83,17 +79,17 @@ async function main() {
     const timeZone =
       timezones[city] || Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    const $newNode = $dateTime.cloneNode(true);
+    const $oldNode = document.querySelectorAll(".date-time")[0];
+    const $newNode = $oldNode.cloneNode(true);
     $newNode.querySelector(".date-time__city").textContent = label || "Home";
 
     // animate the leaving and entering of old/new datetime elements
-    $dateTime.classList.add("leave-to");
+    $oldNode.classList.add("leave-to");
     $newNode.classList.add("enter-from");
-    $dateTime.before($newNode);
+    $oldNode.before($newNode);
 
     setTimeout(() => {
-      $dateTime.remove();
-      $dateTime = $newNode;
+      $oldNode.remove();
     }, 1000);
 
     setTimeout(() => {
