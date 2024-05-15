@@ -5,11 +5,10 @@
 
 body {
   margin: 0;
+  padding-inline: 2rem;
 }
 
 #cities-nav {
-  margin-inline: 2em;
-  padding-inline: 4em;
   border-bottom: 1px solid #dbdbdb;
   position: relative;
   font-size: 12px;
@@ -70,17 +69,28 @@ main {
 }
 
 .date-time {
-  transition: all 1000ms ease;
+  transition: opacity 1000ms ease, transform 1000ms ease;
   grid-row: 1 / 1;
   grid-column: 1 / 1;
+  font-size: max(1.5vw, 12px);
+  color: #1d1d1f; /* from apple.com --sk-headline-text-color */
 }
 
 .date-time * {
   margin: 0;
 }
 
+.date-time__city {
+  font-size: 2em;
+}
+
+.date-time__city,
+.date-time__date {
+  font-weight: 100;
+}
+
 .date-time__time {
-  font-size: 10vw;
+  font-size: 6em;
 }
 
 .leave-to {
