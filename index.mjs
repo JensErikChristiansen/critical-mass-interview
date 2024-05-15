@@ -80,30 +80,38 @@ async function main() {
       timezones[city] || Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     const $oldNode = document.querySelectorAll(".date-time")[0];
+    const $oldReflect = document.querySelectorAll(".date-time-reflection")[0];
+    const $newReflect = $oldReflect.cloneNode(true);
     const $newNode = $oldNode.cloneNode(true);
     $newNode.querySelector(".date-time__city").textContent = label || "Home";
+    $newReflect.querySelector(".date-time__city").textContent = label || "Home";
 
     // animate the leaving and entering of old/new datetime elements
     $oldNode.classList.add("leave-to");
+    $oldReflect.classList.add("leave-to2");
     $newNode.classList.add("enter-from");
+    $newReflect.classList.add("enter-from2");
     $oldNode.before($newNode);
+    $oldReflect.before($newReflect);
 
     setTimeout(() => {
       $oldNode.remove();
+      $oldReflect.remove();
     }, 1000);
 
     setTimeout(() => {
       $newNode.classList.remove("enter-from");
-      createClock($newNode);
+      $newReflect.classList.remove("enter-from2");
+      createClock($newNode, $newReflect);
 
       if (interval !== null) clearInterval(interval);
 
       interval = setInterval(() => {
-        createClock($newNode);
+        createClock($newNode, $newReflect);
       }, 1000);
     }, 300);
 
-    function createClock($dateTimeEl) {
+    function createClock($dateTimeEl, $reflect) {
       const dateTime = new Date();
 
       $dateTimeEl.querySelector(".date-time__time").textContent =
@@ -115,6 +123,23 @@ async function main() {
         });
 
       $dateTimeEl.querySelector(".date-time__date").textContent =
+        dateTime.toLocaleDateString(undefined, {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          timeZone,
+        });
+
+      $reflect.querySelector(".date-time__time").textContent =
+        dateTime.toLocaleTimeString(undefined, {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          timeZone,
+        });
+
+      $reflect.querySelector(".date-time__date").textContent =
         dateTime.toLocaleDateString(undefined, {
           weekday: "long",
           year: "numeric",
